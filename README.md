@@ -1,6 +1,6 @@
 # my_alife
 
-Now, Let's start Your Life that have met with ALife.
+Let's begin your Life with ALife!
 
 ## Getting Started
 
