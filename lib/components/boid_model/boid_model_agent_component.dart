@@ -33,11 +33,23 @@ class BoidModelAgentComponent extends PositionComponent {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawCircle(
-      Vector2.zero().toOffset(),
-      10,
-      MyPalette.primaryColor.paint(),
-    );
+    final double angle = atan2(velocity.y, velocity.x);
+
+    final Vector2 centerLeft = Vector2(size.y / 2, 0);
+    final Vector2 topRight = Vector2(-size.y / 2, size.x / 2);
+    final Vector2 bottomRight = Vector2(-size.y / 2, -size.x / 2);
+
+    centerLeft.rotate(angle);
+    topRight.rotate(angle);
+    bottomRight.rotate(angle);
+
+    final Path path = Path();
+    path.moveTo(centerLeft.x, centerLeft.y);
+    path.lineTo(topRight.x, topRight.y);
+    path.lineTo(bottomRight.x, bottomRight.y);
+    path.close();
+
+    canvas.drawPath(path, paint);
   }
 
   void updateVelocity() {}
