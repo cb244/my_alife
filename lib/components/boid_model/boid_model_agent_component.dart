@@ -6,8 +6,15 @@ import 'package:my_alife/my_parette.dart';
 
 class BoidModelAgentComponent extends PositionComponent {
   Vector2 velocity = Vector2.zero();
+  final Paint paint = Paint()
+    ..color = MyPalette.primaryColor.color
+    ..style = PaintingStyle.fill;
 
-  BoidModelAgentComponent() : super(anchor: Anchor.center);
+  BoidModelAgentComponent()
+      : super(
+          anchor: Anchor.center,
+          size: Vector2(10, 15),
+        );
 
   @override
   Future<void> onLoad() async {
@@ -27,7 +34,7 @@ class BoidModelAgentComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
     canvas.drawCircle(
-      Offset(position.x, position.y),
+      Vector2.zero().toOffset(),
       10,
       MyPalette.primaryColor.paint(),
     );
@@ -41,16 +48,16 @@ class BoidModelAgentComponent extends PositionComponent {
 
   // Clip the position to the field size by periodic boundary condition
   void clipPosition(Vector2 fieldSize) {
-    if (position.x / 2 < 0) {
-      position.x += fieldSize.x / 2;
-    } else if (position.x > fieldSize.x / 2) {
-      position.x -= fieldSize.x / 2;
+    if (position.x < 0) {
+      position.x += fieldSize.x;
+    } else if (position.x > fieldSize.x) {
+      position.x -= fieldSize.x;
     }
 
     if (position.y < 0) {
-      position.y += fieldSize.y / 2;
-    } else if (position.y > fieldSize.y / 2) {
-      position.y -= fieldSize.y / 2;
+      position.y += fieldSize.y;
+    } else if (position.y > fieldSize.y) {
+      position.y -= fieldSize.y;
     }
   }
 }
