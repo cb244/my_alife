@@ -18,9 +18,12 @@ class BoidModelScreen extends StatelessWidget {
               ?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
-      body: GameWidget(
-        game: BoidModelGame(),
-        backgroundBuilder: (context) => const BackgroundComponent(),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GameWidget(
+          game: BoidModelGame(),
+          backgroundBuilder: (context) => const BackgroundComponent(),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
