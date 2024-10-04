@@ -10,6 +10,7 @@ class BoidModelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
         title: Text(
           'Boid Model',
           style: Theme.of(context)
@@ -26,18 +27,27 @@ class BoidModelScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        selectedItemColor: Theme.of(context).colorScheme.onBackground,
+        unselectedItemColor: Theme.of(context).colorScheme.outline,
         items: const [
           BottomNavigationBarItem(
             label: 'animation',
-            icon: Icon(Icons.animation_rounded),
+            icon: Icon(
+              Icons.animation_rounded,
+            ),
           ),
           BottomNavigationBarItem(
             label: 'about',
-            icon: Icon(Icons.info_rounded),
+            icon: Icon(
+              Icons.info_rounded,
+            ),
           ),
           BottomNavigationBarItem(
             label: 'formula',
-            icon: Icon(Icons.calculate_rounded),
+            icon: Icon(
+              Icons.calculate_rounded,
+            ),
           )
         ],
       ),

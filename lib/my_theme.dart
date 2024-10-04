@@ -1,31 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_alife/my_parette.dart';
 
-// https://www.happyhues.co/palettes/15
-const _mainTextColor = Color(0xff33272a);
-const _subTextColor = Color(0xff594a4e);
-const _primaryColor = Color(0xffff8ba7);
-const _secondaryColor = Color(0xffffc6c7);
-const _tertiaryColor = Color(0xffc3f0ca);
-const _backgroundColor = Color(0xfffaeee7);
-const _surfaceVariantColor = Color(0xfffffffe);
-
-ColorScheme _colorScheme = const ColorScheme(
+ColorScheme _colorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: _primaryColor,
-  onPrimary: _mainTextColor,
-  secondary: _secondaryColor,
-  onSecondary: _mainTextColor,
-  tertiary: _tertiaryColor,
-  onTertiary: _mainTextColor,
-  error: _primaryColor,
-  onError: _backgroundColor,
-  background: _backgroundColor,
-  onBackground: _mainTextColor,
-  surface: _backgroundColor,
-  onSurface: _mainTextColor,
-  surfaceVariant: _surfaceVariantColor,
-  onSurfaceVariant: _subTextColor,
+  primary: MyPalette.primary.color,
+  onPrimary: MyPalette.onBackground.color,
+  secondary: MyPalette.secondary.color,
+  onSecondary: MyPalette.onBackground.color,
+  tertiary: MyPalette.tertiary.color,
+  onTertiary: MyPalette.onBackground.color,
+  error: MyPalette.primary.color,
+  onError: MyPalette.background.color,
+  background: MyPalette.background.color,
+  onBackground: MyPalette.onBackground.color,
+  surface: MyPalette.background.color,
+  onSurface: MyPalette.onBackground.color,
+  surfaceVariant: MyPalette.surfaceVariant.color,
+  onSurfaceVariant: MyPalette.onBackground.color,
+  outline: MyPalette.outline.color,
 );
 
 final TextTheme _textTheme = GoogleFonts.montserratTextTheme();

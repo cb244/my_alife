@@ -7,7 +7,7 @@ import 'package:my_alife/my_parette.dart';
 class BoidModelAgentComponent extends PositionComponent {
   Vector2 velocity = Vector2.zero();
   final Paint paint = Paint()
-    ..color = MyPalette.primaryColor.color
+    ..color = MyPalette.primary.color
     ..style = PaintingStyle.fill;
 
   BoidModelAgentComponent()
