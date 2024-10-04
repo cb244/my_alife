@@ -31,7 +31,7 @@ class BoidModelGame extends FlameGame {
 
   Future<void> paintAgents() async {
     if (simulator?.agents == null) return;
-    for (var agent in simulator!.agents!) {
+    for (var agent in simulator!.agents) {
       await add(agent);
     }
   }
