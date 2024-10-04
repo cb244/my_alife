@@ -5,7 +5,8 @@ import 'package:flame/components.dart';
 import 'package:my_alife/my_parette.dart';
 
 class BoidModelAgentComponent extends PositionComponent {
-  Vector2 velocity = Vector2.zero();
+  double velocity = 1;
+
   final Paint paint = Paint()
     ..color = MyPalette.primary.color
     ..style = PaintingStyle.fill;
@@ -20,11 +21,7 @@ class BoidModelAgentComponent extends PositionComponent {
   Future<void> onLoad() async {
     super.onLoad();
     final Random random = Random();
-    velocity = Vector2(1, 1);
-    // velocity = Vector2(
-    //   random.nextDouble() * 2 - 1,
-    //   random.nextDouble() * 2 - 1,
-    // );
+    angle = random.nextDouble() * 2 * pi;
     position = Vector2(
       random.nextDouble() * 1000,
       random.nextDouble() * 1000,
@@ -48,11 +45,15 @@ class BoidModelAgentComponent extends PositionComponent {
     canvas.drawPath(path, paint);
   }
 
+  void updateAngle() {}
+
   void updateVelocity() {}
 
   void updatePosition() {
-    angle = Vector2(1, 0).angleTo(velocity);
-    position += velocity;
+    position += Vector2(
+      velocity * cos(angle),
+      velocity * sin(angle),
+    );
   }
 
   void clipPosition(Vector2 fieldSize) {
