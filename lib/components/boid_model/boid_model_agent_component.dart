@@ -20,10 +20,11 @@ class BoidModelAgentComponent extends PositionComponent {
   Future<void> onLoad() async {
     super.onLoad();
     final Random random = Random();
-    velocity = Vector2(
-      random.nextDouble() * 2 - 1,
-      random.nextDouble() * 2 - 1,
-    );
+    velocity = Vector2(1, 1);
+    // velocity = Vector2(
+    //   random.nextDouble() * 2 - 1,
+    //   random.nextDouble() * 2 - 1,
+    // );
     position = Vector2(
       random.nextDouble() * 1000,
       random.nextDouble() * 1000,
@@ -33,15 +34,10 @@ class BoidModelAgentComponent extends PositionComponent {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    final double angle = atan2(velocity.y, velocity.x);
 
     final Vector2 centerLeft = Vector2(size.y / 2, 0);
     final Vector2 topRight = Vector2(-size.y / 2, size.x / 2);
     final Vector2 bottomRight = Vector2(-size.y / 2, -size.x / 2);
-
-    centerLeft.rotate(angle);
-    topRight.rotate(angle);
-    bottomRight.rotate(angle);
 
     final Path path = Path();
     path.moveTo(centerLeft.x, centerLeft.y);
@@ -55,11 +51,12 @@ class BoidModelAgentComponent extends PositionComponent {
   void updateVelocity() {}
 
   void updatePosition() {
+    angle = Vector2(1, 0).angleTo(velocity);
     position += velocity;
   }
 
-  // Clip the position to the field size by periodic boundary condition
   void clipPosition(Vector2 fieldSize) {
+    // Clip the position to the field size by periodic boundary condition
     if (position.x < 0) {
       position.x += fieldSize.x;
     } else if (position.x > fieldSize.x) {
@@ -72,4 +69,16 @@ class BoidModelAgentComponent extends PositionComponent {
       position.y -= fieldSize.y;
     }
   }
+
+  void separation({
+    required List<BoidModelAgentComponent> otherAgentsInView,
+  }) {}
+
+  void alignment({
+    required List<BoidModelAgentComponent> otherAgentsInView,
+  }) {}
+
+  void cohesion({
+    required List<BoidModelAgentComponent> otherAgentsInView,
+  }) {}
 }
