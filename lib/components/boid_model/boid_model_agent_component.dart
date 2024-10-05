@@ -81,7 +81,7 @@ class BoidModelAgentComponent extends PositionComponent {
     acceleration = Vector2.zero();
     acceleration += separationForce * setting.separationCoefficient;
     acceleration += alignmentForce * setting.alignmentCoefficient;
-    //acceleration += cohesionForce * setting.cohesionCoefficient;
+    acceleration += cohesionForce * setting.cohesionCoefficient;
   }
 
   void updateVelocity() {
@@ -149,10 +149,16 @@ class BoidModelAgentComponent extends PositionComponent {
   void cohesion({
     required List<BoidModelAgentComponent> otherAgents,
   }) {
+    cohesionForce = Vector2.zero();
+
     final List<BoidModelAgentComponent> agents = getAgentsWithinDistance(
       otherAgents: otherAgents,
       distance: setting.cohesionDistance,
     );
+    for (var agent in agents) {
+      cohesionForce += agent.position - position;
+    }
+    cohesionForce /= agents.length.toDouble();
   }
 
   List<BoidModelAgentComponent> getAgentsWithinDistance({

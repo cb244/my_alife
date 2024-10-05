@@ -18,7 +18,7 @@ class BoidModelAgentSetting {
   // Coefficient of force
   double separationCoefficient = 40;
   double alignmentCoefficient = 0.01;
-  double cohesionCoefficient = 1;
+  double cohesionCoefficient = 0.001;
 
   // Distance of influence
   double separationDistance = 40;

@@ -22,9 +22,9 @@ class BoidModelSimulator {
 
   void simulateNextTime() {
     for (var agent in agents) {
-      agent.separation(otherAgents: agents);
+      //agent.separation(otherAgents: agents);
       //agent.alignment(otherAgents: agents);
-      //agent.cohesion(otherAgents: agents);
+      agent.cohesion(otherAgents: agents);
 
       agent.updateAcceleration();
       agent.updateVelocity();
