@@ -17,7 +17,10 @@ class BoidModelGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    BoidModelSetting setting = BoidModelSetting(fieldSize: size);
+    BoidModelSetting setting = BoidModelSetting(
+      agent: BoidModelAgentSetting(),
+      field: BoidModelFieldSetting(size: size),
+    );
     simulator = BoidModelSimulator(setting: setting);
     await paintAgents();
   }

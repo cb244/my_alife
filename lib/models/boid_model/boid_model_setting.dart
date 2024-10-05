@@ -1,31 +1,44 @@
 import 'package:flame/components.dart';
 
 class BoidModelSetting {
-  BoidModelAgentSetting agentSetting = BoidModelAgentSetting();
-  int agentNum = 10;
-  Vector2 fieldSize;
+  BoidModelAgentSetting agent;
+  BoidModelFieldSetting field;
+  int agentNum = 50;
 
   BoidModelSetting({
-    required this.fieldSize,
+    required this.agent,
+    required this.field,
   });
 
   void setFieldSize(Vector2 fieldSize) {
-    this.fieldSize = fieldSize;
+    field = BoidModelFieldSetting(size: fieldSize);
   }
 }
 
 class BoidModelAgentSetting {
   // Coefficient of force
-  double separationCoefficient = 40;
+  double separationCoefficient = 50;
   double alignmentCoefficient = 0.01;
-  double cohesionCoefficient = 0.001;
+  double cohesionCoefficient = 0.0005;
 
   // Distance of influence
-  double separationDistance = 40;
+  double separationDistance = 50;
   double alignmentDistance = 100;
   double cohesionDistance = 100;
 
   // Range of velocity
   double minVelocity = 0.5;
   double maxVelocity = 1;
+}
+
+class BoidModelFieldSetting {
+  Vector2 size;
+
+  BoidModelFieldSetting({
+    required this.size,
+  });
+
+  setSize(Vector2 size) {
+    this.size = size;
+  }
 }

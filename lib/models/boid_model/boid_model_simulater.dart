@@ -10,7 +10,7 @@ class BoidModelSimulator {
     for (var i = 0; i < setting.agentNum; i++) {
       agents.add(
         BoidModelAgentComponent(
-          setting: setting.agentSetting,
+          setting: setting.agent,
         ),
       );
     }
@@ -22,14 +22,14 @@ class BoidModelSimulator {
 
   void simulateNextTime() {
     for (var agent in agents) {
-      //agent.separation(otherAgents: agents);
-      //agent.alignment(otherAgents: agents);
+      agent.separation(otherAgents: agents);
+      agent.alignment(otherAgents: agents);
       agent.cohesion(otherAgents: agents);
 
       agent.updateAcceleration();
       agent.updateVelocity();
       agent.updatePosition();
-      agent.clipPosition(setting.fieldSize);
+      agent.clipPosition(setting.field.size);
     }
   }
 }
