@@ -16,14 +16,14 @@ class BoidModelSetting {
 
 class BoidModelAgentSetting {
   // Coefficient of force
-  double separationCoefficient = 10;
+  double separationCoefficient = 40;
+  double alignmentCoefficient = 0.01;
   double cohesionCoefficient = 1;
-  double alignmentCoefficient = 1;
 
-  // distance
-  double separationDistance = 100;
-  double cohesionDistance = 100;
+  // Distance of influence
+  double separationDistance = 40;
   double alignmentDistance = 100;
+  double cohesionDistance = 100;
 
   // Range of velocity
   double minVelocity = 0.5;

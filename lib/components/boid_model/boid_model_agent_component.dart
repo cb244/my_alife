@@ -43,11 +43,11 @@ class BoidModelAgentComponent extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-    canvas.drawCircle(
-      Offset.zero,
-      setting.separationDistance,
-      MyPalette.outline.paint()..style = PaintingStyle.stroke,
-    );
+    // canvas.drawCircle(
+    //   Offset.zero,
+    //   setting.alignmentDistance,
+    //   MyPalette.outline.paint()..style = PaintingStyle.stroke,
+    // );
 
     super.render(canvas);
 
@@ -80,7 +80,7 @@ class BoidModelAgentComponent extends PositionComponent {
   void updateAcceleration() {
     acceleration = Vector2.zero();
     acceleration += separationForce * setting.separationCoefficient;
-    //acceleration += alignmentForce * setting.alignmentCoefficient;
+    acceleration += alignmentForce * setting.alignmentCoefficient;
     //acceleration += cohesionForce * setting.cohesionCoefficient;
   }
 
@@ -128,15 +128,22 @@ class BoidModelAgentComponent extends PositionComponent {
       distance = max(distance, 0.1);
       separationForce -= direction / (distance * distance);
     }
+    separationForce /= agents.length.toDouble();
   }
 
   void alignment({
     required List<BoidModelAgentComponent> otherAgents,
   }) {
+    alignmentForce = Vector2.zero();
+
     final List<BoidModelAgentComponent> agents = getAgentsWithinDistance(
       otherAgents: otherAgents,
       distance: setting.alignmentDistance,
     );
+    for (var agent in agents) {
+      alignmentForce += agent.velocity - velocity;
+    }
+    alignmentForce /= agents.length.toDouble();
   }
 
   void cohesion({
