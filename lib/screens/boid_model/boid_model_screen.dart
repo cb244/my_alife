@@ -1,7 +1,5 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:my_alife/components/common/background_component.dart';
-import 'package:my_alife/games/boid_model/boid_model_game.dart';
+import 'package:my_alife/screens/boid_model/boid_model_game_widget.dart';
 
 class BoidModelScreen extends StatelessWidget {
   const BoidModelScreen({super.key});
@@ -10,7 +8,7 @@ class BoidModelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         title: Text(
           'Boid Model',
           style: Theme.of(context)
@@ -19,16 +17,13 @@ class BoidModelScreen extends StatelessWidget {
               ?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GameWidget(
-          game: BoidModelGame(),
-          backgroundBuilder: (context) => const BackgroundComponent(),
-        ),
+      body: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: BoidModelGameWidget(),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-        selectedItemColor: Theme.of(context).colorScheme.onBackground,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        selectedItemColor: Theme.of(context).colorScheme.onSurface,
         unselectedItemColor: Theme.of(context).colorScheme.outline,
         items: const [
           BottomNavigationBarItem(

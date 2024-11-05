@@ -8,7 +8,7 @@ class BackgroundComponent extends StatelessWidget {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
     );
   }
 }

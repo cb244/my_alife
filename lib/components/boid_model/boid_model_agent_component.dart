@@ -7,19 +7,23 @@ import 'package:my_alife/models/boid_model/boid_model_setting.dart';
 import 'package:my_alife/my_parette.dart';
 
 class BoidModelAgentComponent extends PositionComponent {
-  final BoidModelAgentSetting setting;
-  Vector2 velocity = Vector2.zero();
-  Vector2 acceleration = Vector2.zero();
-  Vector2 separationForce = Vector2.zero();
-  Vector2 alignmentForce = Vector2.zero();
-  Vector2 cohesionForce = Vector2.zero();
+  final BoidModelSetting setting;
+  Vector2 fieldSize;
+  Vector2 velocityVector = Vector2.zero();
+  Vector2 accelerationVector = Vector2.zero();
+
+  Vector2 separationForceVector = Vector2.zero();
+  Vector2 alignmentForceVector = Vector2.zero();
+  Vector2 cohesionForceVector = Vector2.zero();
 
   final Paint paint = Paint()
     ..color = MyPalette.primary.color
     ..style = PaintingStyle.fill;
 
-  BoidModelAgentComponent({required this.setting})
-      : super(
+  BoidModelAgentComponent({
+    required this.setting,
+    required this.fieldSize,
+  }) : super(
           anchor: Anchor.center,
           size: Vector2(10, 15),
         );
@@ -31,9 +35,9 @@ class BoidModelAgentComponent extends PositionComponent {
 
     angle = random.nextDouble() * 2 * pi;
 
-    double normVelocity = setting.minVelocity +
+    double velocity = setting.minVelocity +
         random.nextDouble() * (setting.maxVelocity - setting.minVelocity);
-    velocity = Vector2(cos(angle), sin(angle)) * normVelocity;
+    velocityVector = Vector2(cos(angle), sin(angle)) * velocity;
 
     position = Vector2(
       random.nextDouble() * 1000,
@@ -78,27 +82,28 @@ class BoidModelAgentComponent extends PositionComponent {
   }
 
   void updateAcceleration() {
-    acceleration = Vector2.zero();
-    acceleration += separationForce * setting.separationCoefficient;
-    acceleration += alignmentForce * setting.alignmentCoefficient;
-    acceleration += cohesionForce * setting.cohesionCoefficient;
+    accelerationVector = Vector2.zero();
+    accelerationVector += separationForceVector * setting.separationCoefficient;
+    accelerationVector += alignmentForceVector * setting.alignmentCoefficient;
+    accelerationVector += cohesionForceVector * setting.cohesionCoefficient;
   }
 
   void updateVelocity() {
-    velocity += acceleration;
-    if (velocity.length > setting.maxVelocity) {
-      velocity = velocity.normalized() * setting.maxVelocity;
-    } else if (velocity.length < setting.minVelocity) {
-      velocity = velocity.normalized() * setting.minVelocity;
+    velocityVector += accelerationVector;
+    if (velocityVector.length > setting.maxVelocity) {
+      velocityVector = velocityVector.normalized() * setting.maxVelocity;
+    } else if (velocityVector.length < setting.minVelocity) {
+      velocityVector = velocityVector.normalized() * setting.minVelocity;
     }
   }
 
   void updatePosition() {
-    position += velocity;
-    angle = Vector2(1, 0).angleToSigned(velocity);
+    position += velocityVector;
+    angle = Vector2(1, 0).angleToSigned(velocityVector);
+    _clipPosition();
   }
 
-  void clipPosition(Vector2 fieldSize) {
+  void _clipPosition() {
     // Clip the position to the field size by periodic boundary condition
     if (position.x < 0) {
       position.x += fieldSize.x;
@@ -113,60 +118,89 @@ class BoidModelAgentComponent extends PositionComponent {
     }
   }
 
+  Vector2 _getDistanceVector({
+    required Vector2 otherPosition,
+  }) {
+    Vector2 distanceVector = otherPosition - position;
+
+    if (distanceVector.x > fieldSize.x / 2) {
+      distanceVector.x -= fieldSize.x;
+    }
+    if (distanceVector.x < -fieldSize.x / 2) {
+      distanceVector.x += fieldSize.x;
+    }
+
+    if (distanceVector.y > fieldSize.y / 2) {
+      distanceVector.y -= fieldSize.y;
+    }
+    if (distanceVector.y < -fieldSize.y / 2) {
+      distanceVector.y += fieldSize.y;
+    }
+
+    return distanceVector;
+  }
+
   void separation({
     required List<BoidModelAgentComponent> otherAgents,
   }) {
-    separationForce = Vector2.zero();
+    separationForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinDistance(
+    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
       otherAgents: otherAgents,
-      distance: setting.separationDistance,
+      radius: setting.separationRadius,
     );
     for (var agent in agents) {
-      Vector2 direction = (agent.position - position).normalized();
-      double distance = position.distanceTo(agent.position);
-      distance = max(distance, 0.1);
-      separationForce -= direction / (distance * distance);
+      Vector2 distanceVector = _getDistanceVector(
+        otherPosition: agent.position,
+      );
+      Vector2 directionVector = distanceVector.normalized();
+      double distance = max(distanceVector.length, 0.1);
+      separationForceVector -= directionVector / (distance * distance);
     }
-    separationForce /= agents.length.toDouble();
+    separationForceVector /= agents.length.toDouble();
   }
 
   void alignment({
     required List<BoidModelAgentComponent> otherAgents,
   }) {
-    alignmentForce = Vector2.zero();
+    alignmentForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinDistance(
+    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
       otherAgents: otherAgents,
-      distance: setting.alignmentDistance,
+      radius: setting.alignmentRadius,
     );
     for (var agent in agents) {
-      alignmentForce += agent.velocity - velocity;
+      alignmentForceVector += agent.velocityVector - velocityVector;
     }
-    alignmentForce /= agents.length.toDouble();
+    alignmentForceVector /= agents.length.toDouble();
   }
 
   void cohesion({
     required List<BoidModelAgentComponent> otherAgents,
   }) {
-    cohesionForce = Vector2.zero();
+    cohesionForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinDistance(
+    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
       otherAgents: otherAgents,
-      distance: setting.cohesionDistance,
+      radius: setting.cohesionRadius,
     );
     for (var agent in agents) {
-      cohesionForce += agent.position - position;
+      cohesionForceVector += _getDistanceVector(
+        otherPosition: agent.position,
+      );
     }
-    cohesionForce /= agents.length.toDouble();
+    cohesionForceVector /= agents.length.toDouble();
   }
 
-  List<BoidModelAgentComponent> getAgentsWithinDistance({
+  List<BoidModelAgentComponent> getAgentsWithinRadius({
     required List<BoidModelAgentComponent> otherAgents,
-    required double distance,
+    required double radius,
   }) {
     return otherAgents.where((otherAgent) {
-      return position.distanceTo(otherAgent.position) <= distance;
+      Vector2 distanceVector = _getDistanceVector(
+        otherPosition: otherAgent.position,
+      );
+      return distanceVector.length <= radius;
     }).toList();
   }
 }
