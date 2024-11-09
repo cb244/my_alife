@@ -140,67 +140,95 @@ class BoidModelAgentComponent extends PositionComponent {
     return distanceVector;
   }
 
-  void separation({
-    required List<BoidModelAgentComponent> otherAgents,
+  void separationPhase({
+    required List<BoidModelAgentComponent> fieldAgents,
+    required Vector2? tapPosition,
   }) {
     separationForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
-      otherAgents: otherAgents,
-      radius: setting.separationRadius,
-    );
-    for (var agent in agents) {
+    List<Vector2> affectedPositions = fieldAgents
+        .where((agent) {
+          return isWithinRadius(
+            position: agent.position,
+            radius: setting.separationRadius,
+          );
+        })
+        .map((agent) => agent.position as Vector2)
+        .toList();
+
+    if (tapPosition != null) {
+      if (isWithinRadius(
+        position: tapPosition,
+        radius: setting.separationRadius,
+      )) {
+        affectedPositions.add(tapPosition);
+      }
+    }
+
+    for (var position in affectedPositions) {
       Vector2 distanceVector = _getDistanceVector(
-        otherPosition: agent.position,
+        otherPosition: position,
       );
       Vector2 directionVector = distanceVector.normalized();
       double distance = max(distanceVector.length, 0.1);
       separationForceVector -= directionVector / (distance * distance);
     }
-    separationForceVector /= agents.length.toDouble();
+    separationForceVector /= affectedPositions.length.toDouble();
   }
 
-  void alignment({
-    required List<BoidModelAgentComponent> otherAgents,
+  void alignmentPhase({
+    required List<BoidModelAgentComponent> fieldAgents,
   }) {
     alignmentForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
-      otherAgents: otherAgents,
+    final List<BoidModelAgentComponent> affectedAgents =
+        filterAgentsWithinRadius(
+      agents: fieldAgents,
       radius: setting.alignmentRadius,
     );
-    for (var agent in agents) {
+    for (var agent in affectedAgents) {
       alignmentForceVector += agent.velocityVector - velocityVector;
     }
-    alignmentForceVector /= agents.length.toDouble();
+    alignmentForceVector /= affectedAgents.length.toDouble();
   }
 
-  void cohesion({
-    required List<BoidModelAgentComponent> otherAgents,
+  void cohesionPhase({
+    required List<BoidModelAgentComponent> fieldAgents,
   }) {
     cohesionForceVector = Vector2.zero();
 
-    final List<BoidModelAgentComponent> agents = getAgentsWithinRadius(
-      otherAgents: otherAgents,
+    final List<BoidModelAgentComponent> affectedAgents =
+        filterAgentsWithinRadius(
+      agents: fieldAgents,
       radius: setting.cohesionRadius,
     );
-    for (var agent in agents) {
+    for (var agent in affectedAgents) {
       cohesionForceVector += _getDistanceVector(
         otherPosition: agent.position,
       );
     }
-    cohesionForceVector /= agents.length.toDouble();
+    cohesionForceVector /= affectedAgents.length.toDouble();
   }
 
-  List<BoidModelAgentComponent> getAgentsWithinRadius({
-    required List<BoidModelAgentComponent> otherAgents,
+  List<BoidModelAgentComponent> filterAgentsWithinRadius({
+    required List<BoidModelAgentComponent> agents,
     required double radius,
   }) {
-    return otherAgents.where((otherAgent) {
-      Vector2 distanceVector = _getDistanceVector(
-        otherPosition: otherAgent.position,
+    return agents.where((agent) {
+      return isWithinRadius(
+        position: agent.position,
+        radius: radius,
       );
-      return distanceVector.length <= radius;
     }).toList();
+  }
+
+  bool isWithinRadius({
+    required Vector2 position,
+    required double radius,
+  }) {
+    Vector2 distanceVector = _getDistanceVector(
+      otherPosition: position,
+    );
+    return distanceVector.length <= radius;
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:my_alife/components/boid_model/boid_model_agent_component.dart';
 import 'package:my_alife/models/boid_model/boid_model_setting.dart';
 
-class BoidModelField extends FlameGame {
+class BoidModelField extends FlameGame with TapCallbacks {
   List<BoidModelAgentComponent> agents = [];
+  Vector2? tapPosition;
 
   @override
   Future<void> onLoad() async {
@@ -35,18 +37,31 @@ class BoidModelField extends FlameGame {
   }
 
   @override
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
+    tapPosition = event.localPosition;
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    super.onTapUp(event);
+    tapPosition = null;
+  }
+
+  @override
   void update(double dt) {
     super.update(dt);
 
     for (var agent in agents) {
-      agent.separation(
-        otherAgents: agents,
+      agent.separationPhase(
+        fieldAgents: agents,
+        tapPosition: tapPosition,
       );
-      agent.alignment(
-        otherAgents: agents,
+      agent.alignmentPhase(
+        fieldAgents: agents,
       );
-      agent.cohesion(
-        otherAgents: agents,
+      agent.cohesionPhase(
+        fieldAgents: agents,
       );
 
       agent.updateAcceleration();
